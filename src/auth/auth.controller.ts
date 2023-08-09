@@ -7,10 +7,7 @@ import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly exceptions: Exceptions,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('/login')
   async login(
@@ -23,7 +20,7 @@ export class AuthController {
 
       return response.status(200).json({
         status: true,
-        message: 'Insert Data Successfully!',
+        message: 'Login Successfully!',
         token: result,
       });
     } catch (error) {
@@ -43,7 +40,6 @@ export class AuthController {
       return response.status(200).json({
         status: true,
         message: 'Register Data Successfully!',
-        data: result,
       });
     } catch (error) {
       throw error;

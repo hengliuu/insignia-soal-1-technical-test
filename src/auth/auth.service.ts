@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -11,6 +10,7 @@ import { loginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { v4 as uuidv4 } from 'uuid';
+import * as buffer from 'buffer';
 
 @Injectable()
 export class AuthService {
@@ -44,19 +44,23 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto): Promise<any> {
-    const generateId = uuidv4();
+    const generateUuidd = uuidv4();
+    const binaryUuid = buffer.Buffer.from(
+      generateUuidd.replace(/-/g, ''),
+      'hex',
+    ); // Convert UUID to Binary(16)
     const hashPassword = await bcrypt.hash(registerDto.password, 15);
 
     const users = await this.usersService.createUsers({
       email: registerDto.email,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      emailVerified: new Date(),
-      lastActivityAt: new Date(),
+      created_at: new Date(),
+      updated_at: new Date(),
+      email_verified: new Date(),
+      last_activity_at: new Date(),
       name: registerDto.name,
       password: hashPassword,
-      workspaceId: registerDto.workspaceId,
-      id: generateId,
+      workspace_id: registerDto.workspaceId,
+      id: binaryUuid,
     });
 
     return {

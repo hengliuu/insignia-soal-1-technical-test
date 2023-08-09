@@ -1,14 +1,13 @@
 import { Prisma } from '@prisma/client';
 
-export class Users implements Prisma.UsersCreateInput {
-  id: string;
-  createdAt: Date;
-  updatedAt?: Date;
-  lastActivityAt: Date;
+export class Users implements Prisma.usersCreateInput {
+  id: Buffer;
+  created_at: string | Date;
+  updated_at?: string | Date;
+  last_activity_at: string | Date;
   email: string;
-  emailVerified: Date;
+  email_verified: string | Date;
   name: string;
   password: string;
-  workspaceId: string;
-  workspace: Prisma.WorkspaceCreateNestedOneWithoutUsersInput;
+  Workspace: Prisma.workspaceCreateNestedOneWithoutUsersInput;
 }

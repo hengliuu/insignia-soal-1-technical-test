@@ -7,17 +7,10 @@ import { UsersService } from 'src/user/users.service';
 import { UsersModule } from 'src/user/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { Exceptions } from 'src/exceptions';
 
 @Module({
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    PrismaService,
-    JwtStrategy,
-    UsersService,
-    Exceptions,
-  ],
+  providers: [AuthService, PrismaService, JwtStrategy, UsersService],
   imports: [
     UsersModule,
     PassportModule,

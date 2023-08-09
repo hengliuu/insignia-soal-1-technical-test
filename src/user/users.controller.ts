@@ -5,10 +5,7 @@ import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly userService: UsersService,
-    private readonly exceptions: Exceptions,
-  ) {}
+  constructor(private readonly userService: UsersService) {}
 
   @Get('')
   async getAllUser(
