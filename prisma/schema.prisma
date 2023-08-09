@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @unique @id @db.VarChar(50)
+  createdAt DateTime @db.DateTime(0)
+  updatedAt DateTime? @db.DateTime(0)
+  lastActivityAt DateTime @db.DateTime(0)
+  email String @unique @db.VarChar(100)
+  emailVerified DateTime @db.DateTime(0)
+  name String @db.VarChar(100)
+  password String @db.VarChar(100)
+  workspaceId String @db.VarChar(50)
+  workspace Workspace @relation(fields: [workspaceId], references: [Id])
+}
+
+model Workspace {
+  Id String @unique @id @db.VarChar(50)
+  name String @db.VarChar(50)
+  User User[]
+  Contact Contact[]
+}
+
+model Contact {
+  Id String @unique @id @db.VarChar(50)
+  createdAt DateTime
+  updatedAt DateTime?
+  workspaceId String @db.VarChar(50)
+  name String @db.VarChar(100)
+  phoneNumber String @db.VarChar(15)
+  email String @db.VarChar(100)
+  address String @db.VarChar(150)
+  ContactList ContactList[]
+  Workspace Workspace @relation(fields: [workspaceId], references: [Id])
+}
+
+model ContactList {
+  Id String @unique @id
+  contactGroupId String
+  contactId String
+  Contact Contact @relation(fields: [contactId], references: [Id])
+  ContactGroup ContactGroup @relation(fields: [contactGroupId], references: [Id])  
+}
+
+model ContactGroup {
+  Id String @unique @id
+  createdAt DateTime
+  updatedAt DateTime?
+  name String
+  description String
+  ContactList ContactList[]
+}
