@@ -1,8 +1,12 @@
-import { Prisma } from '@prisma/client';
-
-export class Workspace implements Prisma.workspaceCreateInput {
-  id?: string;
+export class CreateWorkspaceModel {
   name: string;
-  users?: Prisma.usersCreateNestedManyWithoutWorkspaceInput;
-  contacts?: Prisma.contactCreateNestedManyWithoutWorkspaceInput;
+}
+
+export class UpdateWorkspaceModel {
+  id: string;
+  name: string;
+}
+
+export class DeleteWorkspaceModel {
+  id: string;
 }

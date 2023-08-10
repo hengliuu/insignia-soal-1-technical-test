@@ -13,5 +13,5 @@ export class RegisterDto {
   @Length(3, 100)
   password: string;
 
-  workspaceId: string;
+  workspace_id: string;
 }

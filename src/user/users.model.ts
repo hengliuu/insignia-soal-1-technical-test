@@ -1,7 +1,4 @@
-import { Prisma } from '@prisma/client';
-
-export class Users implements Prisma.usersCreateInput {
-  id: Buffer;
+export class Users {
   created_at: string | Date;
   updated_at?: string | Date;
   last_activity_at: string | Date;
@@ -9,5 +6,24 @@ export class Users implements Prisma.usersCreateInput {
   email_verified: string | Date;
   name: string;
   password: string;
-  Workspace: Prisma.workspaceCreateNestedOneWithoutUsersInput;
+  workspace_id: string;
+}
+
+export class UpdateUsersLastActivityAtRequestModel {
+  email: string;
+  last_activity_at: string | Date;
+}
+
+export class UpdateUsersResponseModel {
+  id: string;
+  email: string;
+  name: string;
+  workspace_id: string;
+}
+
+export class UpdateUsersRequestModel {
+  id: string;
+  email: string;
+  name: string;
+  workspace_id: string;
 }

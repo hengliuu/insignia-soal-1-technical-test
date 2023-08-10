@@ -19,7 +19,7 @@ export class AuthController {
       const result = await this.authService.login(loginDto);
 
       return response.status(200).json({
-        status: true,
+        statusCode: 200,
         message: 'Login Successfully!',
         token: result,
       });
@@ -38,8 +38,9 @@ export class AuthController {
       const result = await this.authService.register(registerDto);
 
       return response.status(200).json({
-        status: true,
+        statusCode: 200,
         message: 'Register Data Successfully!',
+        result: result,
       });
     } catch (error) {
       throw error;

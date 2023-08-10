@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -10,7 +11,7 @@ import { loginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { v4 as uuidv4 } from 'uuid';
-import * as buffer from 'buffer';
+import { WorkspaceService } from 'src/workspace/workspace.service';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,7 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   async login(loginDto: loginDto): Promise<any> {
@@ -40,15 +42,20 @@ export class AuthService {
       throw new BadRequestException("Password Doesn't matched");
     }
 
-    return this.jwtService.sign({ email: users.email });
+    const updateUsersLastActivityAt =
+      await this.usersService.updateUsersLastActivityAt({
+        email: loginDto.email,
+        last_activity_at: new Date(),
+      });
+
+    if (!updateUsersLastActivityAt) {
+      throw new InternalServerErrorException();
+    }
+
+    return await this.jwtService.signAsync({ email: users.email });
   }
 
   async register(registerDto: RegisterDto): Promise<any> {
-    const generateUuidd = uuidv4();
-    const binaryUuid = buffer.Buffer.from(
-      generateUuidd.replace(/-/g, ''),
-      'hex',
-    ); // Convert UUID to Binary(16)
     const hashPassword = await bcrypt.hash(registerDto.password, 15);
 
     const users = await this.usersService.createUsers({
@@ -59,12 +66,11 @@ export class AuthService {
       last_activity_at: new Date(),
       name: registerDto.name,
       password: hashPassword,
-      workspace_id: registerDto.workspaceId,
-      id: binaryUuid,
+      workspace_id: registerDto.workspace_id,
     });
 
     return {
-      token: this.jwtService.sign({ email: users.email }),
+      token: await this.jwtService.sign({ email: users.email }),
     };
   }
 }
