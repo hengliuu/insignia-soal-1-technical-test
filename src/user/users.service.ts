@@ -30,17 +30,31 @@ export class UsersService {
     return get;
   }
 
-  async getUsersByEmail(data: { email: string }): Promise<users> {
+  async getUsersByEmail(email: string): Promise<users> {
     const get = await this.prismaService.users.findUnique({
-      where: { email: data.email },
+      where: { email },
       include: { Workspace: true },
     });
 
     return get;
   }
 
+  async getUsersById(id: string): Promise<users> {
+    const get = await this.prismaService.users.findUnique({ where: { id } });
+
+    if (!get) {
+      throw new InternalServerErrorException();
+    }
+
+    if (get === null) {
+      throw new NotFoundException();
+    }
+
+    return get;
+  }
+
   async createUsers(data: Users): Promise<users> {
-    const validateEmail = await this.getUsersByEmail({ email: data.email });
+    const validateEmail = await this.getUsersByEmail(data.email);
 
     if (validateEmail) {
       throw new ConflictException('Email already exists!');
@@ -79,7 +93,7 @@ export class UsersService {
       id: data.workspace_id,
     });
 
-    const checkEmail = await this.getUsersByEmail({ email: data.email });
+    const checkEmail = await this.getUsersByEmail(data.email);
 
     if (checkEmail !== null) {
       throw new BadRequestException('Email already exists!');
@@ -105,5 +119,17 @@ export class UsersService {
     });
 
     return response;
+  }
+
+  async deleteUsers(id: string): Promise<Boolean> {
+    await this.getUsersById(id);
+
+    const deletes = await this.prismaService.users.delete({ where: { id } });
+
+    if (!deletes) {
+      throw new InternalServerErrorException();
+    }
+
+    return true;
   }
 }

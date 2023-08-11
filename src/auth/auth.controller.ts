@@ -2,7 +2,6 @@ import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
-import { Exceptions } from 'src/exceptions';
 import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')

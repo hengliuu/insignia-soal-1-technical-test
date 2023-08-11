@@ -5,8 +5,7 @@ import {
 } from '@nestjs/common';
 import { workspace } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { CreateWorkspaceDto, UpdateWorkspaceDto } from './workspace.dto';
-import { DeleteWorkspaceModel, UpdateWorkspaceModel } from './workspace.model';
+import { CreateWorkspaceModel, UpdateWorkspaceModel } from './workspace.model';
 
 @Injectable()
 export class WorkspaceService {
@@ -30,7 +29,7 @@ export class WorkspaceService {
     return res;
   }
 
-  async createWorkspace(data: CreateWorkspaceDto): Promise<Boolean> {
+  async createWorkspace(data: CreateWorkspaceModel): Promise<Boolean> {
     const create = await this.prismaService.workspace.create({
       data,
     });
@@ -57,7 +56,7 @@ export class WorkspaceService {
     return true;
   }
 
-  async deleteWorkspace(data: DeleteWorkspaceModel): Promise<string> {
+  async deleteWorkspace(data: { id: string }): Promise<string> {
     await this.getWorkspaceById({ id: data.id });
 
     const deletes = await this.prismaService.workspace.delete({ where: data });

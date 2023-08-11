@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -10,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { UpdateUsersDto } from './users.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
@@ -56,6 +57,26 @@ export class UsersController {
       return response.status(200).json({
         statusCode: 200,
         message: 'Update Data Successfully!',
+        result: result,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  async delete(
+    @Req() request: Request,
+    @Res() response: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    try {
+      const result = this.userService.deleteUsers(id);
+
+      return response.status(200).json({
+        statusCode: 200,
+        message: 'Delete Data Successfully!',
         result: result,
       });
     } catch (error) {
