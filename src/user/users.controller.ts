@@ -38,6 +38,26 @@ export class UsersController {
     }
   }
 
+  @Get(':id')
+  @UseGuards(AuthGuard)
+  async getUserById(
+    @Req() request: Request,
+    @Res() response: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<any> {
+    try {
+      const result = await this.userService.getUsersById(id);
+
+      return response.status(200).json({
+        status: true,
+        message: 'Get Data Successfully!',
+        data: result,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Put(':id')
   @UseGuards(AuthGuard)
   async update(
@@ -72,7 +92,7 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     try {
-      const result = this.userService.deleteUsers(id);
+      const result = await this.userService.deleteUsers(id);
 
       return response.status(200).json({
         statusCode: 200,

@@ -23,7 +23,7 @@ export class UsersService {
   ) {}
 
   async getAllUsers(): Promise<users[]> {
-    const get = this.prismaService.users.findMany({
+    const get = await this.prismaService.users.findMany({
       include: { Workspace: true },
     });
 
@@ -40,14 +40,12 @@ export class UsersService {
   }
 
   async getUsersById(id: string): Promise<users> {
-    const get = await this.prismaService.users.findUnique({ where: { id } });
+    const get = await this.prismaService.users.findUnique({
+      where: { id: id },
+    });
 
     if (!get) {
-      throw new InternalServerErrorException();
-    }
-
-    if (get === null) {
-      throw new NotFoundException();
+      throw new NotFoundException('Users Not Found');
     }
 
     return get;
@@ -68,7 +66,7 @@ export class UsersService {
       throw new NotFoundException("Workspace doesn't Exists!");
     }
 
-    return this.prismaService.users.create({ data });
+    return await this.prismaService.users.create({ data });
   }
 
   async updateUsersLastActivityAt(
@@ -92,6 +90,7 @@ export class UsersService {
     await this.workspaceService.getWorkspaceById({
       id: data.workspace_id,
     });
+    await this.getUsersById(data.id);
 
     const checkEmail = await this.getUsersByEmail(data.email);
 
@@ -124,7 +123,9 @@ export class UsersService {
   async deleteUsers(id: string): Promise<Boolean> {
     await this.getUsersById(id);
 
-    const deletes = await this.prismaService.users.delete({ where: { id } });
+    const deletes = await this.prismaService.users.delete({
+      where: { id: id },
+    });
 
     if (!deletes) {
       throw new InternalServerErrorException();
